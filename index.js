@@ -1,7 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
 
 const transporter = nodemailer.createTransport({
@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
 
@@ -28,23 +28,27 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.post('/send', function (req, res) {
+app.get('/',function(req,res){
+    res.send('Mailer Server');
+})
 
-    let senderName = req.body.contactFormName;
-    let senderEmail = req.body.contactFormEmail;
-    let messageSubject = req.body.contactFormSubjects;
-    let messageText = req.body.contactFormMessage;
-    let copyToSender = req.body.contactFormCopy;
+app.post('/send', function (req, res) {
+    console.log(req.body);
+    let senderName = req.body.name;
+    let senderEmail = req.body.email;
+    let senderNumber = req.body.phone;
+    let messageSubject = req.body.subject;
+    let messageText = req.body.message;
 
     let mailOptions = {
         to: ['t.t.sephiri@gmail.com'], // Enter here the email address on which you want to send emails from your customers
         from: senderName,
         subject: messageSubject,
-        text: senderName +'\n'+ messageText + '\n' + senderEmail,
+        text:`${messageText} \n From \n ${senderName} \n ${senderNumber} \n${senderEmail}` ,
         replyTo: senderEmail
     };
 
-    console.log(senderEmail,senderName,messageSubject,messageText);
+    //console.log(senderEmail,senderName,messageSubject,messageText);
 
     if (senderName === '') {
         res.status(400);
@@ -78,9 +82,9 @@ app.post('/send', function (req, res) {
         return;
     }
 
-    if (copyToSender) {
-        mailOptions.to.push(senderEmail);
-    }
+    // if (copyToSender) {
+    //     mailOptions.to.push(senderEmail);
+    // }
 
     transporter.sendMail(mailOptions, function (error, response) {
         if (error) {
