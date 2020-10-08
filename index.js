@@ -40,7 +40,7 @@ app.post('/send', function (req, res) {
         to: ['t.t.sephiri@gmail.com'], // Enter here the email address on which you want to send emails from your customers
         from: senderName,
         subject: messageSubject,
-        text: messageText,
+        text: senderName +'\n'+ messageText + '\n' + senderEmail,
         replyTo: senderEmail
     };
 
