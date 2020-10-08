@@ -1,7 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const app = express();
-const port = 4000;
+const port = process.env.PORT;
 const bodyParser = require('body-parser');
 
 const transporter = nodemailer.createTransport({
