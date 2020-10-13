@@ -1,7 +1,8 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const app = express();
-const port = process.env.PORT || 8080;
+const cors = require('cors');
+const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 
 const transporter = nodemailer.createTransport({
@@ -20,13 +21,11 @@ const transporter = nodemailer.createTransport({
 });
 
 app.use(bodyParser.json());
+app.use(cors());
 
-app.use(function (req, res, next) {
+// app.use(function (req, res, next) {
 
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+// });
 
 app.get('/',function(req,res){
     res.send('Mailer Server');
@@ -89,10 +88,10 @@ app.post('/send', function (req, res) {
     transporter.sendMail(mailOptions, function (error, response) {
         if (error) {
             console.log(error);
-            res.end('error');
+            res.send('error');
         } else {
             console.log('Message sent: ', response);
-            res.end('sent');
+            res.send('sent');
         }
     });
 });
